@@ -12,7 +12,17 @@ server:
     include-stacktrace: always
   port: 8080
 
+
+openai:
+  api:
+    key: 8eb155be40ae4d2ab3a3fbaae20c5d56
+    url: https://zero-dku.openai.azure.com/openai/deployments/Hexagonal/chat/completions?api-version=2024-02-15-preview
+
 ---
+
+
+
+
 spring.config.activate.on-profile: local
 
 spring:

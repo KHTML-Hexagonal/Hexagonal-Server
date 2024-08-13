@@ -29,10 +29,11 @@ public class BuildingController {
     @PostMapping("/{building-id}/register")
     public ApiResponse<?> registerBuilding(
             @RequestHeader("Authorization") String token,
-            @RequestParam("images") List<MultipartFile> multipartFiles
+            @RequestParam("images") List<MultipartFile> multipartFiles,
+            @PathVariable(name = "building-id") String buildingId
     ) throws IOException {
         User requestUser = jwtValidator.getUserFromToken(token);
-        buildingService.registerBuilding(requestUser, multipartFiles);
+        buildingService.registerBuilding(buildingId, requestUser, multipartFiles);
         return ApiResponse.success();
     }
 

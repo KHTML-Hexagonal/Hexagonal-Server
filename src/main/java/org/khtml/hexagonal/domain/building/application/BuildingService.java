@@ -2,24 +2,30 @@ package org.khtml.hexagonal.domain.building.application;
 
 import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.ai.dto.BuildingUpdate;
-import org.khtml.hexagonal.domain.building.BlobManager;
-import org.khtml.hexagonal.domain.building.Building;
-import org.khtml.hexagonal.domain.building.BuildingDetailResponse;
-import org.khtml.hexagonal.domain.building.BuildingRepository;
+import org.khtml.hexagonal.domain.building.*;
 import org.khtml.hexagonal.domain.user.User;
+import org.khtml.hexagonal.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final BuildingImageRepository buildingImageRepository;
+    private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
     private final BlobManager blobManager;
 
+
+    @Transactional
     public Building createBuilding(Building building) {
         return buildingRepository.save(building);
     }
@@ -33,6 +39,7 @@ public class BuildingService {
         buildingRepository.deleteById(id);
     }
 
+    @Transactional
     public Building updateBuilding(String buildingId, BuildingUpdate buildingUpdate) {
         Building existingBuilding = getBuilding(buildingId);
         existingBuilding.setStructureReason(buildingUpdate.getStructureReason());
@@ -54,10 +61,30 @@ public class BuildingService {
         return buildingRepository.save(existingBuilding);
     }
 
-    public void registerBuilding(User requestUser, List<MultipartFile> multipartFiles) throws IOException {
-        MultipartFile file = multipartFiles.getFirst();
-        String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
+    @Transactional
+    public void registerBuilding(String buildingId, User requestUser, List<MultipartFile> multipartFiles) throws IOException {
+        for(MultipartFile file : multipartFiles) {
+            String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
 
+            User user = userRepository.findById(requestUser.getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+            Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
+                    .orElseThrow(() -> new IllegalArgumentException("Building not found"));
+
+            building.updateUser(user);
+
+            Image image = Image.builder()
+                    .url(url)
+                    .user(user)
+                    .build();
+
+            BuildingImage buildingImage = BuildingImage.builder()
+                    .building(building)
+                    .image(image)
+                    .build();
+
+            imageRepository.save(image);
+            buildingImageRepository.save(buildingImage);
+        }
     }
 
 }

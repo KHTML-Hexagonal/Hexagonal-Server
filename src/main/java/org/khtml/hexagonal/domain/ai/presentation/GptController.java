@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.khtml.hexagonal.domain.ai.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.ai.dto.ImageRequest;
+import org.khtml.hexagonal.domain.ai.dto.MaterialInfo;
 import org.khtml.hexagonal.domain.building.application.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -196,11 +197,26 @@ public class GptController {
     }
 
     @PostMapping("/analyze-images/material")
-    public ResponseEntity<Map<String, Object>> analyzeMateiralImages(@RequestBody ImageRequest imageRequest) throws JsonProcessingException {
+    public ResponseEntity<Map<String, Object>> analyzeMaterialImages(@RequestBody ImageRequest imageRequest) throws JsonProcessingException {
 
         // 시스템 메시지
         String systemMessage = """
-            blah blah blah
+            너는 사진을 받으면 해당 사진에 나오는 부자재의 종류들과 그 사용법들을 반환하는 챗봇 AI다.
+            
+            제공된 사진을 분석하여 부자재의 종류와 사용법을 양식에 맞게 작성된 JSON 형식으로 출력해야 한다.
+            
+            반드시 양식에 맞게 작성해야 하며, 다른 방식으로의 응답은 절대 허용하지 않는다.
+            
+            mateial과 usage는 여러개가 올 수 있지만 리스트 형식으로는 '절대' 출력하면 안된다.
+            
+            mateiral과 usage가 여러 가지 이상으로 판단될 시, 반드시 ,로만 구분하여 한 개의 string으로 출력해야 한다.
+            
+            예시 JSON은 다음과 같다.
+            
+            {
+                "material" : "나무 판자, 쇠 파이프"
+                "usage" : "벽 만들기, 천장 고치기"
+            }
         """;
 
         // OpenAI API에 보낼 요청 데이터 작성
@@ -267,8 +283,9 @@ public class GptController {
         // JSON 데이터를 Map으로 파싱
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> jsonData = objectMapper.readValue(jsonContent, new TypeReference<Map<String, Object>>() {});
-
         // 필요한 데이터 사용
+        MaterialInfo materialInfo = new MaterialInfo((String) jsonData.get("material"), (String) jsonData.get("usage"));
+        System.out.println(materialInfo);
 
         // 리턴값 반환
         return ResponseEntity.ok(responseBody);

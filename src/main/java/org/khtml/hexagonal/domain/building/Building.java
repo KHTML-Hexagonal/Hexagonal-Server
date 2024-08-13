@@ -52,4 +52,13 @@ public class Building {
     @Column(name = "data_reference_date")
     private String dataReferenceDate;
 
+    @Column(name = "latitude")
+    private String latitude;
+
+    @Column(name = "longitude")
+    private String longitude;
+
+    @Column(name = "description")
+    private String description;
+
 }

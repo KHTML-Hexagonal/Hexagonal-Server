@@ -1,4 +1,4 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.ai.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,29 +7,21 @@ import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.building.dto.ImageRequest;
 import org.khtml.hexagonal.domain.building.dto.MaterialInfo;
-import org.khtml.hexagonal.domain.auth.JwtValidator;
-import org.khtml.hexagonal.domain.building.application.BuildingService;
-import org.khtml.hexagonal.domain.user.User;
-import org.khtml.hexagonal.global.support.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RequestMapping("/api/v1/buildings")
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-@RestController
-public class BuildingController {
-
-    private final BuildingService buildingService;
-    private final JwtValidator jwtValidator;
+@Service
+public class GptService {
 
     @Value("${openai.api.url}")
     private String openAiApiUrl;
@@ -37,22 +29,7 @@ public class BuildingController {
     @Value("${openai.api.key}")
     private String openAiApiKey;
 
-    @GetMapping("/{building-id}")
-    public ApiResponse<BuildingDetailResponse> getBuildingDetail(
-            @PathVariable(name = "building-id") String buildingId
-    ) {
-        return ApiResponse.success(BuildingDetailResponse.toResponse(buildingService.getBuilding(buildingId)));
-    }
-
-    @PostMapping("/{building-id}/register")
-    public ApiResponse<?> registerBuilding(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("images") List<MultipartFile> multipartFiles,
-            @PathVariable(name = "building-id") String buildingId
-
-    ) throws IOException {
-        User requestUser = jwtValidator.getUserFromToken(token);
-        List<String> urls = buildingService.registerBuilding(buildingId, requestUser, multipartFiles);
+    public BuildingUpdate analyzeBuilding(List<String> urls) throws JsonProcessingException {
         BuildingUpdate buildingUpdate;
         ImageRequest imageRequest = new ImageRequest();
         List<ImageRequest.Content> contentList = new ArrayList<>();
@@ -71,13 +48,8 @@ public class BuildingController {
         }
 
         imageRequest.setContent(contentList);
-
-
-        buildingUpdate = analyzeHouseImages(imageRequest);
-
-        return ApiResponse.success(buildingUpdate);
+        return analyzeHouseImages(imageRequest);
     }
-
 
     public BuildingUpdate analyzeHouseImages(ImageRequest imageRequest) throws JsonProcessingException {
 

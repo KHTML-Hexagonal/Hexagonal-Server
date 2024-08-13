@@ -1,4 +1,4 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.building.entity;
 
 
 import jakarta.persistence.*;

@@ -1,5 +1,6 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.building.repository;
 
+import org.khtml.hexagonal.domain.building.entity.Building;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

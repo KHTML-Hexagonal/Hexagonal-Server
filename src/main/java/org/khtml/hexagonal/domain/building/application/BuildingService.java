@@ -1,10 +1,17 @@
 package org.khtml.hexagonal.domain.building.application;
 
 import lombok.RequiredArgsConstructor;
+import org.khtml.hexagonal.domain.building.ImageType;
 import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
-import org.khtml.hexagonal.domain.building.*;
+import org.khtml.hexagonal.domain.building.entity.Building;
+import org.khtml.hexagonal.domain.building.entity.BuildingImage;
+import org.khtml.hexagonal.domain.building.entity.Image;
+import org.khtml.hexagonal.domain.building.repository.BuildingImageRepository;
+import org.khtml.hexagonal.domain.building.repository.BuildingRepository;
+import org.khtml.hexagonal.domain.building.repository.ImageRepository;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.domain.user.UserRepository;
+import org.khtml.hexagonal.global.support.error.ErrorType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -64,7 +72,7 @@ public class BuildingService {
     @Transactional
     public List<String> registerBuilding(String buildingId, User requestUser, List<MultipartFile> multipartFiles) throws IOException {
         List<String> ret = new ArrayList<>();
-        for(MultipartFile file : multipartFiles) {
+        for (MultipartFile file : multipartFiles) {
             String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
 
             User user = userRepository.findById(requestUser.getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -75,6 +83,7 @@ public class BuildingService {
 
             Image image = Image.builder()
                     .url(url)
+                    .imageType(ImageType.BUILDING)
                     .user(user)
                     .build();
 
@@ -90,6 +99,26 @@ public class BuildingService {
         }
 
         return ret;
+    }
+
+    @Transactional
+    public void updateAnalyzedBuilding(String buildingId, BuildingUpdate buildingUpdate) {
+        Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
+                .orElseThrow(() -> new IllegalArgumentException("Building not found"));
+
+        building.updateAnalyzedData(buildingUpdate);
+    }
+
+    @Transactional
+    public void updateBuildingDescription(String buildingId, Long userId, String description) {
+        Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
+                .orElseThrow(() -> new IllegalArgumentException("Building not found"));
+
+        if(!Objects.equals(building.getUser().getId(), userId)) {
+            throw new IllegalArgumentException(ErrorType.DEFAULT_ERROR.getMessage());
+        }
+
+        building.setDescription(description);
     }
 
 }

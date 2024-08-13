@@ -2,6 +2,13 @@ package org.khtml.hexagonal.domain.material;
 
 import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.building.*;
+import org.khtml.hexagonal.domain.building.application.BlobManager;
+import org.khtml.hexagonal.domain.building.entity.Building;
+import org.khtml.hexagonal.domain.building.entity.BuildingImage;
+import org.khtml.hexagonal.domain.building.entity.Image;
+import org.khtml.hexagonal.domain.building.repository.BuildingImageRepository;
+import org.khtml.hexagonal.domain.building.repository.BuildingRepository;
+import org.khtml.hexagonal.domain.building.repository.ImageRepository;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.domain.user.UserRepository;
 import org.springframework.stereotype.Service;

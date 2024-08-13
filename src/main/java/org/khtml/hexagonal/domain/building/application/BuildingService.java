@@ -43,6 +43,19 @@ public class BuildingService {
                 .orElseThrow(() -> new IllegalArgumentException("Building not found"));
     }
 
+    public List<String> getBuildingImages(String buildingId) {
+        Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
+                .orElseThrow(() -> new IllegalArgumentException("Building not found"));
+
+        List<BuildingImage> buildingImages = buildingImageRepository.findAllByBuilding(building);
+        List<String> images = new ArrayList<>();
+        for (BuildingImage buildingImage : buildingImages) {
+            images.add(buildingImage.getImage().getUrl());
+        }
+
+        return images;
+    }
+
     public void deleteBuilding(Long id) {
         buildingRepository.deleteById(id);
     }

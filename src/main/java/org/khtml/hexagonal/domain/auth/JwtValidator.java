@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.ServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.domain.user.UserRepository;
 import org.khtml.hexagonal.global.config.JwtProperty;
 import org.slf4j.Logger;
@@ -40,6 +41,17 @@ public class JwtValidator {
             logger.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    public User getUserFromToken(String token) {
+        String extracted = extractTokenFromHeader(token);
+        Claims claims = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(jwtProperty.getSecretKey().getBytes())).build()
+                .parseSignedClaims(extracted).getPayload();
+        return userRepository.findById(Long.parseLong(claims.getSubject())).orElseThrow();
+    }
+
+    private String extractTokenFromHeader(String header) {
+        return header.substring("Bearer ".length());
     }
 
 }

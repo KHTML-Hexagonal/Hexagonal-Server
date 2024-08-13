@@ -19,7 +19,6 @@ public class AuthController {
     public ApiResponse<TokenResult> login(
             @Valid @RequestBody LoginRequest loginRequest
     ) {
-        System.out.println("loginRequest = " + loginRequest);
         return ApiResponse.success(authService.login(loginRequest));
     }
 }

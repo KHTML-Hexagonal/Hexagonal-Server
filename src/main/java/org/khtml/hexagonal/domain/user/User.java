@@ -41,4 +41,5 @@ public class User extends BaseEntity {
         this.numberOfPersons = numberOfPersons;
         this.locationConsent = locationConsent;
     }
+
 }

@@ -11,16 +11,13 @@ public class RecommendBuilding {
     private String imageUrl;
     private String address;
     private String repairList;
-    private Integer totalScore;
 
     @Builder
     @QueryProjection
-    public RecommendBuilding(String buildingId, String imageUrl, String address, String repairList, Integer totalScore) {
+    public RecommendBuilding(String buildingId, String imageUrl, String address, String repairList) {
         this.buildingId = buildingId;
         this.imageUrl = imageUrl;
         this.address = address;
         this.repairList = repairList;
-        this.totalScore = totalScore;
     }
-
 }

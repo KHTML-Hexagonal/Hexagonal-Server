@@ -22,6 +22,12 @@ openai:
     key: ${OPEN_API_KEY}
     url: ${OPEN_API_URL}
 
+azure:
+  storage:
+    account-name: ${BLOB_ACCOUNT_NAME}
+    account-key: ${BLOB_ACCOUNT_KEY}
+    endpoint: ${BLOB_ENDPOINT}
+
 ---
 
 spring.config.activate.on-profile: local

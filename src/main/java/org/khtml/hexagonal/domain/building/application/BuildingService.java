@@ -2,16 +2,23 @@ package org.khtml.hexagonal.domain.building.application;
 
 import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.ai.dto.BuildingUpdate;
+import org.khtml.hexagonal.domain.building.BlobManager;
 import org.khtml.hexagonal.domain.building.Building;
 import org.khtml.hexagonal.domain.building.BuildingDetailResponse;
 import org.khtml.hexagonal.domain.building.BuildingRepository;
+import org.khtml.hexagonal.domain.user.User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final BlobManager blobManager;
 
     public Building createBuilding(Building building) {
         return buildingRepository.save(building);
@@ -45,6 +52,12 @@ public class BuildingService {
         existingBuilding.setRepairList(buildingUpdate.getRepairList());
 
         return buildingRepository.save(existingBuilding);
+    }
+
+    public void registerBuilding(User requestUser, List<MultipartFile> multipartFiles) throws IOException {
+        MultipartFile file = multipartFiles.getFirst();
+        String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
+
     }
 
 }

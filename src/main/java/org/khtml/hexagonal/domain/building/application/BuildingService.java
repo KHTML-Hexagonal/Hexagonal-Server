@@ -3,7 +3,7 @@ package org.khtml.hexagonal.domain.building.application;
 import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.building.ImageType;
 import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
-import org.khtml.hexagonal.domain.building.dto.RecommendBuildingResult;
+import org.khtml.hexagonal.domain.building.dto.RecommendBuilding;
 import org.khtml.hexagonal.domain.building.entity.Building;
 import org.khtml.hexagonal.domain.building.entity.BuildingImage;
 import org.khtml.hexagonal.domain.building.entity.Image;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.khtml.hexagonal.domain.building.dto.RecommendBuildingResult.*;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -130,26 +129,15 @@ public class BuildingService {
         Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
                 .orElseThrow(() -> new IllegalArgumentException("Building not found"));
 
-        if(!Objects.equals(building.getUser().getId(), userId)) {
+        if (!Objects.equals(building.getUser().getId(), userId)) {
             throw new IllegalArgumentException(ErrorType.DEFAULT_ERROR.getMessage());
         }
 
         building.setBuildingDescription(description);
     }
 
-    public RecommendBuildingResult recommendBuilding() {
-        List<BuildingImage> buildingImages = buildingImageRepository.recommendBuilding();
-        List<RecommendBuilding> recommendBuildings = new ArrayList<>();
-        for(BuildingImage buildingImage : buildingImages) {
-            Building building = buildingImage.getBuilding();
-            Image image = buildingImage.getImage();
-            recommendBuildings.add(new RecommendBuilding(
-                    image.getUrl(),
-                    building.getLegalDistrictName() + " " + building.getLandLotNumber(),
-                    building.getRepairList()
-            ));
-        }
-
-        return new RecommendBuildingResult(recommendBuildings);
+    public List<RecommendBuilding> recommendBuilding() {
+        return buildingImageRepository.recommendBuilding();
     }
+
 }

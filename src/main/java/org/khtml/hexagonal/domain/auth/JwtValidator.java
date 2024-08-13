@@ -4,19 +4,12 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.ServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.domain.user.UserRepository;
 import org.khtml.hexagonal.global.config.JwtProperty;
-import org.khtml.hexagonal.global.support.error.ApiException;
-import org.khtml.hexagonal.global.support.error.ErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -47,23 +40,6 @@ public class JwtValidator {
             logger.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
-    }
-
-    public Authentication getAuthentication(String token) {
-        String userId;
-        try {
-            userId = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(jwtProperty.getSecretKey().getBytes())).build()
-                    .parseSignedClaims(token).getPayload().getSubject();
-        } catch (Exception e) {
-            throw new ApiException(ErrorType.INVALID_TOKEN);
-        }
-        User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new ApiException(ErrorType.INVALID_USER));
-        return new UsernamePasswordAuthenticationToken(
-                user,
-                "",
-                Collections.singletonList((GrantedAuthority) () -> user.getUserType().toString())
-        );
     }
 
 }

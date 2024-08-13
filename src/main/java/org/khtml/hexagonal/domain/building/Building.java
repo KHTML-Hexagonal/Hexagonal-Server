@@ -100,4 +100,10 @@ public class Building {
 
     @Column(name = "repair_list")
     private String repairList;
+
+    @Column(name = "material_list")
+    private String materialList;
+
+    @Column(name = "condition_list")
+    private String conditionList;
 }

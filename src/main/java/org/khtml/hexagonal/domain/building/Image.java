@@ -2,6 +2,7 @@ package org.khtml.hexagonal.domain.building;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.khtml.hexagonal.domain.common.BaseEntity;
@@ -18,5 +19,11 @@ public class Image extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Image(String url, User user) {
+        this.url = url;
+        this.user = user;
+    }
 
 }

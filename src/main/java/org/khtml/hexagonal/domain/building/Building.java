@@ -108,5 +108,9 @@ public class Building {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-  
+
+    public void updateUser(User user) {
+        this.user = user;
+    }
+
 }

@@ -16,13 +16,17 @@ public class Image extends BaseEntity {
 
     private String url;
 
+    @Enumerated(EnumType.STRING)
+    private ImageType imageType;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Image(String url, User user) {
+    public Image(String url, ImageType imageType, User user) {
         this.url = url;
+        this.imageType = imageType;
         this.user = user;
     }
 

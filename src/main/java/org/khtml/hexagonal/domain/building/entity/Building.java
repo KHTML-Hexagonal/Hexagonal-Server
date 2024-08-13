@@ -103,8 +103,14 @@ public class Building {
     @Column(name = "repair_list")
     private String repairList;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "building_description")
+    private String buildingDescription;
+
+    @Column(name = "material_description")
+    private String materialDescription;
+
+    @Column(name = "material_usage")
+    private String materialUsage;
 
     @Column(name = "is_analyzed")
     private Boolean isAnalyzed = false;
@@ -115,6 +121,10 @@ public class Building {
 
     public void updateUser(User user) {
         this.user = user;
+    }
+
+    public void updateMaterialUsage(String materialUsage) {
+        this.materialUsage = materialUsage;
     }
 
     public void updateAnalyzedData(BuildingUpdate buildingUpdate) {

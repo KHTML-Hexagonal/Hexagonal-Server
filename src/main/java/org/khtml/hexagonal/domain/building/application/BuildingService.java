@@ -118,7 +118,7 @@ public class BuildingService {
             throw new IllegalArgumentException(ErrorType.DEFAULT_ERROR.getMessage());
         }
 
-        building.setDescription(description);
+        building.setBuildingDescription(description);
     }
 
 }

@@ -22,7 +22,7 @@ public record BuildingDetailResponse(
         return new BuildingDetailResponse(
                 building.getGisBuildingId(),
                 building.getLegalDistrictName() + " " + building.getLandLotNumber(),
-                building.getDescription(),
+                building.getBuildingDescription(),
                 building.getUser() == null ? null : building.getUser().getPhoneNumber(),
                 building.getCrackScore(),
                 building.getLeakScore(),

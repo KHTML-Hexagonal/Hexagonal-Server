@@ -5,6 +5,8 @@ import org.khtml.hexagonal.domain.ai.application.GptManager;
 import org.khtml.hexagonal.domain.building.dto.*;
 import org.khtml.hexagonal.domain.auth.JwtValidator;
 import org.khtml.hexagonal.domain.building.application.BuildingService;
+import org.khtml.hexagonal.domain.building.entity.Building;
+import org.khtml.hexagonal.domain.building.entity.Image;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.global.support.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +28,9 @@ public class BuildingController {
     public ApiResponse<BuildingDetailResponse> getBuildingDetail(
             @PathVariable(name = "building-id") String buildingId
     ) {
-        return ApiResponse.success(BuildingDetailResponse.toResponse(buildingService.getBuilding(buildingId)));
+        List<String> images = buildingService.getBuildingImages(buildingId);
+        Building building = buildingService.getBuilding(buildingId);
+        return ApiResponse.success(BuildingDetailResponse.toResponse(images, building));
     }
 
     @PostMapping("/{building-id}/register")

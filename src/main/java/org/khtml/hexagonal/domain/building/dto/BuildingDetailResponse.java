@@ -2,7 +2,10 @@ package org.khtml.hexagonal.domain.building.dto;
 
 import org.khtml.hexagonal.domain.building.entity.Building;
 
+import java.util.List;
+
 public record BuildingDetailResponse(
+        List<String> images,
         String buildingId,
         String address,
         String description,
@@ -18,8 +21,9 @@ public record BuildingDetailResponse(
         String wallMaterial,
         String windowDoorMaterial
 ) {
-    public static BuildingDetailResponse toResponse(Building building) {
+    public static BuildingDetailResponse toResponse(List<String> images, Building building) {
         return new BuildingDetailResponse(
+                images,
                 building.getGisBuildingId(),
                 building.getLegalDistrictName() + " " + building.getLandLotNumber(),
                 building.getBuildingDescription(),

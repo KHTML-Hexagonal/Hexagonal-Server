@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorType {
 
     DEFAULT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.E500, "An unexpected error has occurred.", LogLevel.ERROR),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, ErrorCode.E401, "Invalid token.", LogLevel.ERROR);
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, ErrorCode.E401, "Invalid token.", LogLevel.ERROR),
+    INVALID_USER(HttpStatus.BAD_REQUEST, ErrorCode.E402, "Invalid user.", LogLevel.ERROR);
 
     private final HttpStatus status;
 

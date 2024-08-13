@@ -4,5 +4,6 @@ public enum ErrorCode {
 
     E500,
     E401,
+    E402
 
 }

@@ -2,6 +2,7 @@ package org.khtml.hexagonal.domain.user;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.khtml.hexagonal.domain.common.BaseEntity;
@@ -31,4 +32,13 @@ public class User extends BaseEntity {
     @Column(name = "location_consent")
     private Boolean locationConsent;
 
+    @Builder
+    public User(String providerId, UserType userType, String phoneNumber, String username, Integer numberOfPersons, Boolean locationConsent) {
+        this.providerId = providerId;
+        this.userType = userType;
+        this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.numberOfPersons = numberOfPersons;
+        this.locationConsent = locationConsent;
+    }
 }

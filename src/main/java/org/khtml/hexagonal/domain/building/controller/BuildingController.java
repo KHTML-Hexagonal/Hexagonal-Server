@@ -7,6 +7,7 @@ import org.khtml.hexagonal.domain.auth.JwtValidator;
 import org.khtml.hexagonal.domain.building.application.BuildingService;
 import org.khtml.hexagonal.domain.building.entity.Building;
 import org.khtml.hexagonal.domain.building.entity.Image;
+import org.khtml.hexagonal.domain.building.repository.BuildingImageRepository;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.global.support.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,11 @@ public class BuildingController {
         buildingService.updateBuildingDescription(buildingId, requestUser.getId(), buildingDescriptionRequest.description());
 
         return ApiResponse.success();
+    }
+
+    @GetMapping("/recommend")
+    public ApiResponse<?> recommendBuilding() {
+        return ApiResponse.success(buildingService.recommendBuilding());
     }
 
 }

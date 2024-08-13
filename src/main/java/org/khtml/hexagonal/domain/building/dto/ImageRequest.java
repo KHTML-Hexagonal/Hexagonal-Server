@@ -1,4 +1,4 @@
-package org.khtml.hexagonal.domain.ai.dto;
+package org.khtml.hexagonal.domain.building.dto;
 
 import lombok.Getter;
 import lombok.Setter;

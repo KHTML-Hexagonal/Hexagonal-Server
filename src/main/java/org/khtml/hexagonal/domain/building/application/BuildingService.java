@@ -1,7 +1,7 @@
 package org.khtml.hexagonal.domain.building.application;
 
 import lombok.RequiredArgsConstructor;
-import org.khtml.hexagonal.domain.ai.dto.BuildingUpdate;
+import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.building.*;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.domain.user.UserRepository;
@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -62,7 +62,8 @@ public class BuildingService {
     }
 
     @Transactional
-    public void registerBuilding(String buildingId, User requestUser, List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> registerBuilding(String buildingId, User requestUser, List<MultipartFile> multipartFiles) throws IOException {
+        List<String> ret = new ArrayList<>();
         for(MultipartFile file : multipartFiles) {
             String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
 
@@ -84,7 +85,11 @@ public class BuildingService {
 
             imageRepository.save(image);
             buildingImageRepository.save(buildingImage);
+
+            ret.add(url);
         }
+
+        return ret;
     }
 
 }

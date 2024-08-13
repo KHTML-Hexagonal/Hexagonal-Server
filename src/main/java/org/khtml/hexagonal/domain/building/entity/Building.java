@@ -8,6 +8,9 @@ import org.khtml.hexagonal.domain.building.BuildingStatus;
 import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.user.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Table(name = "building")
 @Getter
 @Setter
@@ -118,6 +121,9 @@ public class Building {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "building")
+    private List<Image> images = new ArrayList<>();
 
     public void updateUser(User user) {
         this.user = user;

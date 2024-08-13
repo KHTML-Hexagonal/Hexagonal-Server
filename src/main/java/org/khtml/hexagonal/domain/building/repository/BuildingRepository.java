@@ -1,5 +1,6 @@
 package org.khtml.hexagonal.domain.building.repository;
 
+import org.khtml.hexagonal.domain.building.BuildingStatus;
 import org.khtml.hexagonal.domain.building.entity.Building;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,7 @@ public interface BuildingRepository extends JpaRepository<Building, Long> {
 
     @EntityGraph(attributePaths = {"user"})
     Optional<Building> findBuildingByGisBuildingId(String gisBuildingId);
+
+    List<Building> findAllByBuildingStatus(BuildingStatus buildingStatus);
 
 }

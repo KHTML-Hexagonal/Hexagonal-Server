@@ -17,17 +17,22 @@ public class AuthService {
 
     @Transactional
     public TokenResult login(LoginRequest loginRequest) {
-        User newUser = User.builder()
-                .providerId(loginRequest.providerId())
-                .locationConsent(loginRequest.locationConsent())
-                .numberOfPersons(loginRequest.numberOfPersons())
-                .phoneNumber(loginRequest.phoneNumber())
-                .username(loginRequest.username())
-                .userType(UserType.valueOf(loginRequest.userType()))
-                .build();
-
-        User savedUser = userRepository.save(newUser);
-        String accessToken = jwtGenerator.generateAccessToken(savedUser.getId());
+        User user;
+        if (!userRepository.existsByProviderId(loginRequest.providerId())) {
+            user = User.builder()
+                    .providerId(loginRequest.providerId())
+                    .locationConsent(loginRequest.locationConsent())
+                    .numberOfPersons(loginRequest.numberOfPersons())
+                    .phoneNumber(loginRequest.phoneNumber())
+                    .username(loginRequest.username())
+                    .userType(UserType.valueOf(loginRequest.userType()))
+                    .build();
+        } else {
+            user = userRepository.findByProviderId(loginRequest.providerId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        }
+        userRepository.save(user);
+        String accessToken = jwtGenerator.generateAccessToken(user.getId());
         String refreshToken = jwtGenerator.generateRefreshToken();
 
         return new TokenResult(accessToken, refreshToken);

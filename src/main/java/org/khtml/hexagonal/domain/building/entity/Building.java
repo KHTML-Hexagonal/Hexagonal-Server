@@ -1,12 +1,12 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.building.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.khtml.hexagonal.domain.building.BuildingStatus;
+import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.user.User;
-
-import java.util.List;
 
 @Table(name = "building")
 @Getter
@@ -18,6 +18,7 @@ public class Building {
     @Id
     private String gisBuildingId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "building_status")
     private BuildingStatus buildingStatus = BuildingStatus.NOT_REGISTERED;
 
@@ -105,12 +106,35 @@ public class Building {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_analyzed")
+    private Boolean isAnalyzed = false;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     public void updateUser(User user) {
         this.user = user;
+    }
+
+    public void updateAnalyzedData(BuildingUpdate buildingUpdate) {
+        this.structureReason = buildingUpdate.getStructureReason();
+        this.roofMaterial = buildingUpdate.getRoofMaterial();
+        this.roofCondition = buildingUpdate.getRoofCondition();
+        this.wallMaterial = buildingUpdate.getWallMaterial();
+        this.wallCondition = buildingUpdate.getWallCondition();
+        this.windowDoorMaterial = buildingUpdate.getWindowDoorMaterial();
+        this.windowDoorCondition = buildingUpdate.getWindowDoorCondition();
+        this.overallCondition = buildingUpdate.getOverallCondition();
+        this.conditionReason = buildingUpdate.getConditionReason();
+        this.crackScore = buildingUpdate.getCrackScore();
+        this.leakScore = buildingUpdate.getLeakScore();
+        this.corrosionScore = buildingUpdate.getCorrosionScore();
+        this.agingScore = buildingUpdate.getAgingScore();
+        this.totalScore = buildingUpdate.getTotalScore();
+        this.repairList = buildingUpdate.getRepairList();
+        this.isAnalyzed = true;
+        this.buildingStatus = BuildingStatus.REGISTERED;
     }
 
 }

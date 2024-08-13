@@ -1,4 +1,6 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.building.dto;
+
+import org.khtml.hexagonal.domain.building.entity.Building;
 
 public record BuildingDetailResponse(
         String buildingId,

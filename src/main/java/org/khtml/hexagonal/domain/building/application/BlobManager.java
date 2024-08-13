@@ -1,4 +1,4 @@
-package org.khtml.hexagonal.domain.building;
+package org.khtml.hexagonal.domain.building.application;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;

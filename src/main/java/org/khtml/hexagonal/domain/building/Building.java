@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.khtml.hexagonal.domain.user.User;
 
 import java.util.List;
 
@@ -100,4 +101,12 @@ public class Building {
 
     @Column(name = "repair_list")
     private String repairList;
+
+    @Column(name = "description")
+    private String description;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

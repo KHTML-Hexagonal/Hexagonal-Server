@@ -2,6 +2,7 @@ package org.khtml.hexagonal.domain.material;
 
 import lombok.RequiredArgsConstructor;
 import org.khtml.hexagonal.domain.auth.JwtValidator;
+import org.khtml.hexagonal.domain.building.dto.BuildingDescriptionRequest;
 import org.khtml.hexagonal.domain.user.User;
 import org.khtml.hexagonal.global.support.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,18 @@ public class MaterialController {
     ) throws IOException {
         User requestUser = jwtValidator.getUserFromToken(token);
         materialService.registerMaterials(buildingId, requestUser, multipartFiles);
+        return ApiResponse.success();
+    }
+
+    @PostMapping("/{building-id}/register/description")
+    public ApiResponse<?> registerBuilding(
+            @RequestHeader("Authorization") String token,
+            @PathVariable(name = "building-id") String buildingId,
+            @RequestBody BuildingDescriptionRequest buildingDescriptionRequest
+    ) throws IOException {
+        User requestUser = jwtValidator.getUserFromToken(token);
+        materialService.updateMaterialDescription(buildingId, requestUser.getId(), buildingDescriptionRequest.description());
+
         return ApiResponse.success();
     }
 

@@ -1,7 +1,7 @@
 package org.khtml.hexagonal.domain.building.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.khtml.hexagonal.domain.ai.application.GptService;
+import org.khtml.hexagonal.domain.ai.application.GptManager;
 import org.khtml.hexagonal.domain.building.dto.*;
 import org.khtml.hexagonal.domain.auth.JwtValidator;
 import org.khtml.hexagonal.domain.building.application.BuildingService;
@@ -20,7 +20,7 @@ public class BuildingController {
 
     private final BuildingService buildingService;
     private final JwtValidator jwtValidator;
-    private final GptService gptService;
+    private final GptManager gptManager;
 
     @GetMapping("/{building-id}")
     public ApiResponse<BuildingDetailResponse> getBuildingDetail(
@@ -38,7 +38,7 @@ public class BuildingController {
         User requestUser = jwtValidator.getUserFromToken(token);
         List<String> urls = buildingService.registerBuilding(buildingId, requestUser, multipartFiles);
 
-        BuildingUpdate buildingUpdate = gptService.analyzeBuilding(urls);
+        BuildingUpdate buildingUpdate = gptManager.analyzeBuilding(urls);
         buildingService.updateAnalyzedBuilding(buildingId, buildingUpdate);
 
         return ApiResponse.success(buildingUpdate);
@@ -55,6 +55,5 @@ public class BuildingController {
 
         return ApiResponse.success();
     }
-
 
 }

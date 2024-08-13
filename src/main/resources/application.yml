@@ -12,7 +12,14 @@ server:
     include-stacktrace: always
   port: 8080
 
+
+openai:
+  api:
+    key: ${OPEN_API_KEY}
+    url: ${OPEN_API_URL}
+
 ---
+
 spring.config.activate.on-profile: local
 
 spring:

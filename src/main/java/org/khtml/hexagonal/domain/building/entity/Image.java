@@ -20,14 +20,19 @@ public class Image extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ImageType imageType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_id")
+    private Building building;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Image(String url, ImageType imageType, User user) {
+    public Image(String url, ImageType imageType, Building building, User user) {
         this.url = url;
         this.imageType = imageType;
+        this.building = building;
         this.user = user;
     }
 

@@ -1,13 +1,12 @@
 package org.khtml.hexagonal.domain.building.application;
 
 import lombok.RequiredArgsConstructor;
+import org.khtml.hexagonal.domain.building.BuildingStatus;
 import org.khtml.hexagonal.domain.building.ImageType;
 import org.khtml.hexagonal.domain.building.dto.BuildingUpdate;
 import org.khtml.hexagonal.domain.building.dto.RecommendBuilding;
 import org.khtml.hexagonal.domain.building.entity.Building;
-import org.khtml.hexagonal.domain.building.entity.BuildingImage;
 import org.khtml.hexagonal.domain.building.entity.Image;
-import org.khtml.hexagonal.domain.building.repository.BuildingImageRepository;
 import org.khtml.hexagonal.domain.building.repository.BuildingRepository;
 import org.khtml.hexagonal.domain.building.repository.ImageRepository;
 import org.khtml.hexagonal.domain.user.User;
@@ -29,7 +28,6 @@ import java.util.Objects;
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
-    private final BuildingImageRepository buildingImageRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final BlobManager blobManager;
@@ -49,10 +47,10 @@ public class BuildingService {
         Building building = buildingRepository.findBuildingByGisBuildingId(buildingId)
                 .orElseThrow(() -> new IllegalArgumentException("Building not found"));
 
-        List<BuildingImage> buildingImages = buildingImageRepository.findAllByBuilding(building);
+        List<Image> buildingImages = imageRepository.findAllByBuilding(building);
         List<String> images = new ArrayList<>();
-        for (BuildingImage buildingImage : buildingImages) {
-            images.add(buildingImage.getImage().getUrl());
+        for (Image buildingImage : buildingImages) {
+            images.add(buildingImage.getUrl());
         }
 
         return images;
@@ -98,18 +96,12 @@ public class BuildingService {
 
             Image image = Image.builder()
                     .url(url)
+                    .building(building)
                     .imageType(ImageType.BUILDING)
                     .user(user)
                     .build();
 
-            BuildingImage buildingImage = BuildingImage.builder()
-                    .building(building)
-                    .image(image)
-                    .build();
-
             imageRepository.save(image);
-            buildingImageRepository.save(buildingImage);
-
             ret.add(url);
         }
 
@@ -137,7 +129,23 @@ public class BuildingService {
     }
 
     public List<RecommendBuilding> recommendBuilding() {
-        return buildingImageRepository.recommendBuilding();
+        List<Building> buildings = buildingRepository.findAllByBuildingStatus(BuildingStatus.REGISTERED);
+        List<RecommendBuilding> recommendBuildings = new ArrayList<>();
+        for (Building building : buildings) {
+            String imageUrl = null;
+            if (building.getImages() != null && !building.getImages().isEmpty()) {
+                imageUrl = building.getImages().getFirst().getUrl();
+            }
+
+            recommendBuildings.add(RecommendBuilding.builder()
+                    .buildingId(building.getGisBuildingId())
+                    .imageUrl(imageUrl)
+                    .address(building.getLegalDistrictName() + " " + building.getLandLotNumber())
+                    .repairList(building.getRepairList())
+                    .build());
+        }
+        return recommendBuildings;
     }
+
 
 }

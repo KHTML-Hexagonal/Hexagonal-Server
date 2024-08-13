@@ -6,9 +6,7 @@ import org.khtml.hexagonal.domain.building.*;
 import org.khtml.hexagonal.domain.building.application.BlobManager;
 import org.khtml.hexagonal.domain.building.dto.MaterialResult;
 import org.khtml.hexagonal.domain.building.entity.Building;
-import org.khtml.hexagonal.domain.building.entity.BuildingImage;
 import org.khtml.hexagonal.domain.building.entity.Image;
-import org.khtml.hexagonal.domain.building.repository.BuildingImageRepository;
 import org.khtml.hexagonal.domain.building.repository.BuildingRepository;
 import org.khtml.hexagonal.domain.building.repository.ImageRepository;
 import org.khtml.hexagonal.domain.user.User;
@@ -29,7 +27,6 @@ import java.util.Objects;
 public class MaterialService {
 
     private final BuildingRepository buildingRepository;
-    private final BuildingImageRepository buildingImageRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final MaterialRepository materialRepository;
@@ -47,13 +44,11 @@ public class MaterialService {
         for (MultipartFile file : multipartFiles) {
             String url = blobManager.storeFile(file.getOriginalFilename(), file.getInputStream(), file.getSize());
 
-            Image image = Image.builder().url(url).imageType(ImageType.MATERIAL).user(user).build();
-            BuildingImage buildingImage = BuildingImage.builder().image(image).building(building).build();
+            Image image = Image.builder().url(url).building(building).imageType(ImageType.MATERIAL).user(user).build();
 
             urls.add(url);
 
             imageRepository.save(image);
-            buildingImageRepository.save(buildingImage);
         }
 
         MaterialResult materialResult = gptManager.analyzeMaterial(urls);
